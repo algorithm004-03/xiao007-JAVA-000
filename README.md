@@ -1,7 +1,6 @@
 # 极客大学「Java进阶训练营-第0期」作业提交仓库
-
-
-
+***
+*作业提交地址：[https://github.com/JAVA-000/JAVA-000/issues](https://github.com/JAVA-000/JAVA-000/issues)*
 
 ## 仓库目录结构说明
 
