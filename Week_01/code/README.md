@@ -258,6 +258,22 @@ public class HelloClassLoader extends ClassLoader {
 
 ## 作业三
 ### 作业要求
+&ensp;&ensp;&ensp;&ensp;画一张图，展示Xmx 、 Xms 、 Xmn 、 Meta 、 DirectMemory 、 Xss 这些内存参数的关系。
+
+### 思路
+&ensp;&ensp;&ensp;&ensp;首先要了解上面各个参数的含义：
+
+- Xmx：指定最大堆内存
+- Xms：指定堆内存空间的初始大小
+- Xmn：设置新生代初始和最大大小；设置过小会导致频繁GC，过大会导致GC一次时间过长；建议1/2~1/4
+- Meta(-XX:MaxMetaspaceSize=size)：设置Meta空间大小
+- DirectMemory(-XX:MaxDirectMemorySize=size)：设置系统可使用的最大堆外内存
+- Xss：设置每个线程栈的字节数
+
+### 内存模型及相应参数对应图
+
+![内存模型](内存模型.png)
 
 ## 作业四
 ### 作业要求 
+&ensp;&ensp;&ensp;&ensp;检查一下自己维护的业务系统的JVM参数配置，用jstat和jstack、jmap查看一下详情，并且自己独立分析一下大概情况，思考有没有不合理的地方，如何改进。
