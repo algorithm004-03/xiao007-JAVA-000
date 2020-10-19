@@ -1,11 +1,13 @@
 # 学习笔记
 ***
-*这里将作业写到本周课程的工程的README.md文件中，这里写学习记录*
+*这里将作业写到本周课程的工程的：作业.md文件中，这里写学习记录*
+
+*相关的代码放到当前目录下的：example工程中*
 
 ## 作业说明
 &ensp;&ensp;&ensp;&ensp;作业工程是当前目录下的code
 
-&ensp;&ensp;&ensp;&ensp;作业解答文件是：[作业解答:code/README.md](./code/README.md)
+&ensp;&ensp;&ensp;&ensp;作业解答文件是：[作业解答:code/README.md](./作业.md)
 
 ## 一.Java语义概览（需要掌握程度：了解）
 ### 知识概览
@@ -94,7 +96,129 @@
 ### 自己的思考和尝试
 #### 各个JVM版本的默认GC
 
+## 6.JDK命令行工具
+- 常用命令行工具：jps,jinfo,jstat,jmap,jstack,jcmd,jrunscript,jjs
+
+64位*线程数*系数13 / 10
+
+大部分都是可以本地和远程的
+
+java 常用命令行整理
+
+### 命令详解与尝试
+*一些小提示：使用命令的时候，直接一个 -help 就能对命令用途和用法有个大概的了解*
+
+#### [jps](https://docs.oracle.com/en/java/javase/13/docs/specs/man/jps.html)
+命令用途：查看当前系统中的Java进程列表
+
+常用的命令有下面两种：
+
+```bash
+# 查看当前系统中Java进程，显示进程号和名称
+jps
+
+# 查看当前系统中Java进程，显示进程号和名称，还有更相信的启动信息
+jps -lvm
+```
+
+#### [jinfo](https://docs.oracle.com/javase/8/docs/technotes/tools/unix/jinfo.html)
+命令用途：查看指定Java进程的详细信息。能看到当前系统的信息，如显示win10；java路径；运行程序的用户；Java版本信息；VM信息
+
+常用命令示例：
+
+```bash
+jinfo <pid>
+```
+
+#### [jstat](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jstack.html)
+命令用途：打印Java线程中的信息，类名，线程名（线程尽量要有一个标识名称，便于调试查看）。常用语查看当前进程是否有死锁
+
+下面是一个死锁的程序示例代码：
+
+```java
+public class DeadLockSample extends Thread {
+    private String first;
+    private String second;
+
+    public DeadLockSample(String name, String first, String second) {
+        super(name);
+        this.first = first;
+        this.second = second;
+    }
+
+    @Override
+    public void run() {
+        synchronized (first) {
+            System.out.println(this.getName() + " get lock: " + first);
+            try {
+                Thread.sleep(1000);
+                synchronized (second) {
+                    System.out.println(this.getName() + " get lock: " + second);
+                }
+            } catch (InterruptedException e) {
+
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        String lockA = "LockA";
+        String lockB = "LockB";
+
+        DeadLockSample t1 = new DeadLockSample("Thread1", lockA, lockB);
+        DeadLockSample t2 = new DeadLockSample("Thread2", lockB, lockA);
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+    }
+}
+```
+
+使用就stack查看进程就可以发现在最后打印了死锁信息
+
+```bash
+Found one Java-level deadlock:
+=============================
+"Thread1":
+  waiting to lock monitor 0x000002a2e47ecb80 (object 0x0000000621291fe0, a java.lang.String),
+  which is held by "Thread2"
+"Thread2":
+  waiting to lock monitor 0x000002a2e47ee980 (object 0x0000000621291fb0, a java.lang.String),
+  which is held by "Thread1"
+
+Java stack information for the threads listed above:
+===================================================
+"Thread1":
+        at com.company.DeadLockSample.run(DeadLockSample.java:20)
+        - waiting to lock <0x0000000621291fe0> (a java.lang.String)
+        - locked <0x0000000621291fb0> (a java.lang.String)
+"Thread2":
+        at com.company.DeadLockSample.run(DeadLockSample.java:20)
+        - waiting to lock <0x0000000621291fb0> (a java.lang.String)
+        - locked <0x0000000621291fe0> (a java.lang.String)
+
+Found 1 deadlock.
+```
+
+使用示例：
+
+```
+jstack pid
+```
+
+#### jstat
+
+#### jmap
+
+#### jhat
+
+#### jcmd
+
+
 ## 参考资料记录
 - Java训练营课程及相关课件
 - [第23讲 | 请介绍类加载过程，什么是双亲委派模型？](https://time.geekbang.org/column/article/9946)
 - [Class Loaders in Java](https://www.baeldung.com/java-classloaders)
+- [Java8 JVM 参数官方说明文档](https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html)
