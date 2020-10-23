@@ -26,8 +26,8 @@ public class GCLogAnalysis {
         Object[] cacheGarbege = new Object[cacheSize];
 
         // 在此时间范围内，持续循环
-        while (true) {
-//        while (System.currentTimeMillis() < endMillis) {
+//        while (true) {
+        while (System.currentTimeMillis() < endMillis) {
             // 生成垃圾对象
             Object garbage = generateGarbage(100 * 1024);
             counter.increment();
@@ -35,10 +35,10 @@ public class GCLogAnalysis {
             if (randomIndex < cacheSize) {
                 cacheGarbege[randomIndex] = garbage;
             }
-            System.out.println("执行中！ 共生成对象次数：" + counter.longValue());
+//            System.out.println("执行中！ 共生成对象次数：" + counter.longValue());
         }
 
-//        System.out.println("执行结束！ 共生成对象次数：" + counter.longValue());
+        System.out.println("执行结束！ 共生成对象次数：" + counter.longValue());
     }
 
     /**
