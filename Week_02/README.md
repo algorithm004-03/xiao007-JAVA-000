@@ -1,3 +1,5 @@
+*第一步部分是第一模块总结，第二部分是作业*
+
 # Java训练营 模块一 JVM 总结
 ***
 ## 总览
@@ -407,3 +409,336 @@ major GC 不是为频繁回收而设计的，但major GC 现在也要清 理这�
 - 6、排查应用系统 排查配置文件: 启动参数配置、Spring 配置、JVM 监控参数、数据库参数、Log 参数、APM 配置、 内存问题，比如是否存在内存泄漏，内存溢出、批处理导致的内存放大、GC 问题等等； GC 问题，确定GC 算法、确定GC 的KPI，GC 总耗时、GC 最大暂停时间、分析GC 日志和监控指标：内存 分配速度，分代提升速度，内存使用率等数据。适当时修改内存配置； 排查线程, 理解线程状态、并发线程数，线程Dump，锁资源、锁等待，死锁； 排查代码，比如安全漏洞、低效代码、算法优化、存储优化、架构调整、重构、解决业务代码BUG、第三方 库、XSS、CORS、正则； 单元测试：覆盖率、边界值、Mock 测试、集成测试。 
 - 7、排除资源竞争、坏邻居效应 
 - 8、疑难问题排查分析手段 DUMP 线程\内存； 抽样分析\调整代码、异步化、削峰填谷。
+
+
+
+
+
+# 作业
+## 作业一
+&ensp;&ensp;&ensp;&ensp;作业要求：使用GCLogAnalysis.java 自己演练一遍串行/并行/CMS/G1的案例。 
+
+&ensp;&ensp;&ensp;&ensp;用于测试的代码如下：
+
+```java
+package com.company;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
+
+/**
+ * GC日志生成演示与解读
+ */
+public class GCLogAnalysis {
+
+    private static Random random = new Random();
+
+    public static void main(String[] args) {
+        // 当前毫秒时间戳
+        long startMillis = System.currentTimeMillis();
+        // 持续运行毫秒数，可根据需要进行修改
+        long timeoutMillis = TimeUnit.SECONDS.toMillis(1);
+        // 结束时间戳
+        long endMillis = startMillis + timeoutMillis;
+        LongAdder counter = new LongAdder();
+        System.out.println("正在执行");
+
+        // 缓存一部分对象，进入老年代
+        int cacheSize = 2000;
+        Object[] cacheGarbege = new Object[cacheSize];
+
+        // 在此时间范围内，持续循环
+//        while (true) {
+        while (System.currentTimeMillis() < endMillis) {
+            // 生成垃圾对象
+            Object garbage = generateGarbage(100 * 1024);
+            counter.increment();
+            int randomIndex = random.nextInt(2 * cacheSize);
+            if (randomIndex < cacheSize) {
+                cacheGarbege[randomIndex] = garbage;
+            }
+//            System.out.println("执行中！ 共生成对象次数：" + counter.longValue());
+        }
+
+        System.out.println("执行结束！ 共生成对象次数：" + counter.longValue());
+    }
+
+    /**
+     * 生成对象
+     * @param maxSize
+     * @return
+     */
+    private static Object generateGarbage(int maxSize) {
+        int randomSize = random.nextInt(maxSize);
+        int type = randomSize % 4;
+        Object result = null;
+        switch (type) {
+            case 0:
+                result = new int[randomSize];
+                break;
+            case 1:
+                result = new byte[randomSize];
+                break;
+            case 2:
+                result = new double[randomSize];
+                break;
+            default:
+                StringBuilder builder = new StringBuilder();
+                String randomString = "randomString-Anything";
+                while (builder.length() < randomSize) {
+                    builder.append(randomString);
+                    builder.append(maxSize);
+                    builder.append(randomSize);
+                }
+                result = builder.toString();
+                break;
+        }
+        return result;
+    }
+}
+```
+
+&ensp;&ensp;&ensp;&ensp;自动运行测试脚本：
+
+```python
+"""
+GC分析测试脚本
+"""
+import os
+import subprocess
+
+if __name__ == "__main__":
+    command = ["java", "xmx", "xms", "gc", "F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java"]
+
+    for memory in ["128m", "512m", "1g", "2g", "4g", "8g"]:
+        for gc in ["-XX:+UseSerialGC", "-XX:+UseParallelGC", "-XX:+UseConcMarkSweepGC", "-XX:+UseG1GC"]:
+            xmx = "-Xmx" + memory
+            xms = "-Xms" + memory
+            command[1] = xmx
+            command[2] = xms
+            command[3] = gc
+
+            # result = os.system(" ".join(command))
+            try:
+                spend = 0
+                for _ in range(0, 10):
+                    spend += int(subprocess.check_output(" ".join(command)))
+                print(memory, gc, "::", spend / 10)
+            except Exception as e:
+                print(memory, gc, "::OOM")
+
+```
+
+&ensp;&ensp;&ensp;&ensp;此次分别测试内存级别为：128m、512M、1G、2G、4G、8G，对串行、并行、CMS、G1分别进行测试，测试大致命令如下：
+
+```sh
+java -XX:+UseSerialGC -Xms128m -Xmx128m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms128m -Xmx128m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms128m -Xmx128m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms128m -Xmx128m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms128m -Xmx128m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms128m -Xmx128m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms128m -Xmx128m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms128m -Xmx128m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms512m -Xmx512m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms512m -Xmx512m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms512m -Xmx512m Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms512m -Xmx512m -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms1g -Xmx1g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms1g -Xmx1g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms1g -Xmx1g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms1g -Xmx1g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms2g -Xmx2g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms2g -Xmx2g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms2g -Xmx2g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms2g -Xmx2g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms4g -Xmx4g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms4g -Xmx4g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms4g -Xmx4g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms4g -Xmx4g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+
+java -XX:+UseSerialGC -Xms8g -Xmx8g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseParallelGC -Xms8g -Xmx8g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseConcMarkSweepGC -Xms8g -Xmx8g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+java -XX:+UseG1GC -Xms8g -Xmx8g -Xlog:gc* F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+```
+
+&ensp;&ensp;&ensp;&ensp;使用Python写脚本，每个运行十次，取平均值作为每次生成对象的数量，均衡时间分配等波动。测试的结果如下图表格所示：
+
+| GC/MEM             | 128M | 512M    | 1G      | 2G      | 4G      | 8G      |
+| ------------------ | ---- | ------- | ------- | ------- | ------- | ------- |
+| UseSerialGC        | OOM  | 13908.4 | 18831.2 | 17942.7 | 15903.8 | 10634.6 |
+| UseParallelGC      | OOM  | 10730.8 | 19241.3 | 21413.5 | 21765.2 | 14347.6 |
+| UseConcMarkSweepGC | OOM  | 13729.9 | 18409.2 | 17671.8 | 17331.6 | 16474.6 |
+| UseG1GC            | OOM  | 15307.3 | 23348.2 | 23697.0 | 21144.1 | 23816.7 |
+
+&ensp;&ensp;&ensp;&ensp;先从内存不断增加来看，可以看到串行、并行、CMS都有一个先上升后下降的现象，我们从GC的原理来看，内存越大，需要进行标记和整理的对象就越多，而GC的处理能力有一个上限，在能力范围内，也就是内存较小的时候，它能在较短时间内标记和清理完全；但随着内存增大，超过能力范围，其标记和清除的负担加重，性能就表现出下降的趋势了
+
+&ensp;&ensp;&ensp;&ensp;为了更具体的验证我们的想法，对每个GC做内存递增测试，测试数据大致如下（每个内存跑十次，取平局值）：
+
+&ensp;&ensp;&ensp;&ensp;下面这个是串行GC的测试数据，从328M逐步递增到4G，观察下面的数据可以看出，串行是存在一个处理上限的，700-3500M之间好像性能是差不的，但后面就开始下降了。
+
+```sh
+328 -XX:+UseSerialGC :: 8723.888888888889
+428 -XX:+UseSerialGC :: 12440.555555555555
+528 -XX:+UseSerialGC :: 15624.444444444445
+628 -XX:+UseSerialGC :: 18966.777777777777
+728 -XX:+UseSerialGC :: 20527.88888888889
+828 -XX:+UseSerialGC :: 21462.88888888889
+928 -XX:+UseSerialGC :: 20745.333333333332
+1028 -XX:+UseSerialGC :: 21513.333333333332
+1128 -XX:+UseSerialGC :: 21560.222222222223
+1228 -XX:+UseSerialGC :: 21394.11111111111
+1328 -XX:+UseSerialGC :: 20535.666666666668
+1428 -XX:+UseSerialGC :: 20152.444444444445
+1528 -XX:+UseSerialGC :: 19518.555555555555
+1628 -XX:+UseSerialGC :: 20273.11111111111
+1728 -XX:+UseSerialGC :: 19393.333333333332
+1828 -XX:+UseSerialGC :: 19979.88888888889
+1928 -XX:+UseSerialGC :: 20114.555555555555
+2028 -XX:+UseSerialGC :: 19766.333333333332
+2128 -XX:+UseSerialGC :: 19728.88888888889
+2228 -XX:+UseSerialGC :: 19286.88888888889
+2328 -XX:+UseSerialGC :: 19006.11111111111
+2428 -XX:+UseSerialGC :: 19194.666666666668
+2528 -XX:+UseSerialGC :: 19179.0
+2628 -XX:+UseSerialGC :: 19013.0
+2728 -XX:+UseSerialGC :: 19063.777777777777
+2828 -XX:+UseSerialGC :: 19735.222222222223
+2928 -XX:+UseSerialGC :: 19732.555555555555
+3028 -XX:+UseSerialGC :: 19298.222222222223
+3128 -XX:+UseSerialGC :: 19084.222222222223
+3228 -XX:+UseSerialGC :: 18631.444444444445
+3328 -XX:+UseSerialGC :: 18772.222222222223
+3428 -XX:+UseSerialGC :: 18784.333333333332
+3528 -XX:+UseSerialGC :: 19467.777777777777
+3628 -XX:+UseSerialGC :: 18784.666666666668
+3728 -XX:+UseSerialGC :: 18572.88888888889
+3828 -XX:+UseSerialGC :: 18389.555555555555
+3928 -XX:+UseSerialGC :: 17629.777777777777
+```
+
+&ensp;&ensp;&ensp;&ensp;关于为啥提高内存能提升性能，我们可以看下面的测试数据，分别测试了328、528、728的内存数据，可以看到由于内存扩大，每次触发GC的阙值是不断提高的，阙值的不断提高，而总的GC次数下降；而且可以观察到内存增大，但单词的GC时间并没有增加，大致可以看出不同内存的平均单次GC时间应该是差不多的。GC次数的减少，GC时间就相应的减少，业务时间就增加了，所以性能就提升了。
+
+```sh
+lw@DESKTOP-1JVUVP4  F:\Code\Java\JAVA-000   main ≣ +1 ~2 -0 !                                         [10:07]
+❯ java -XX:+UseSerialGC -Xms328m -Xmx328m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+[0.008s][info][gc] Using Serial
+[0.722s][info][gc] GC(0) Pause Young (Allocation Failure) 87M->28M(317M) 20.131ms
+[0.770s][info][gc] GC(1) Pause Young (Allocation Failure) 116M->62M(317M) 30.488ms
+[0.823s][info][gc] GC(2) Pause Young (Allocation Failure) 150M->94M(317M) 41.132ms
+[0.926s][info][gc] GC(3) Pause Young (Allocation Failure) 181M->127M(317M) 90.829ms
+[0.963s][info][gc] GC(4) Pause Young (Allocation Failure) 214M->156M(317M) 23.138ms
+[1.015s][info][gc] GC(5) Pause Young (Allocation Failure) 243M->186M(317M) 37.662ms
+[1.064s][info][gc] GC(6) Pause Young (Allocation Failure) 274M->216M(317M) 37.775ms
+[1.115s][info][gc] GC(8) Pause Full (Allocation Failure) 303M->197M(317M) 37.808ms
+[1.115s][info][gc] GC(7) Pause Young (Allocation Failure) 303M->197M(317M) 38.489ms
+[1.170s][info][gc] GC(10) Pause Full (Allocation Failure) 284M->207M(317M) 40.868ms
+[1.170s][info][gc] GC(9) Pause Young (Allocation Failure) 284M->207M(317M) 41.245ms
+[1.234s][info][gc] GC(12) Pause Full (Allocation Failure) 295M->224M(317M) 49.322ms
+[1.234s][info][gc] GC(11) Pause Young (Allocation Failure) 295M->224M(317M) 49.783ms
+[1.294s][info][gc] GC(13) Pause Full (Allocation Failure) 316M->224M(317M) 47.789ms
+[1.334s][info][gc] GC(14) Pause Full (Allocation Failure) 317M->250M(317M) 27.350ms
+[1.386s][info][gc] GC(15) Pause Full (Allocation Failure) 316M->260M(317M) 43.286ms
+[1.440s][info][gc] GC(16) Pause Full (Allocation Failure) 316M->265M(317M) 45.928ms
+[1.506s][info][gc] GC(17) Pause Full (Allocation Failure) 316M->261M(317M) 54.715ms
+[1.534s][info][gc] GC(18) Pause Full (Allocation Failure) 316M->284M(317M) 20.048ms
+[1.574s][info][gc] GC(19) Pause Full (Allocation Failure) 316M->285M(317M) 35.890ms
+[1.624s][info][gc] GC(20) Pause Full (Allocation Failure) 317M->286M(317M) 43.767ms
+[1.686s][info][gc] GC(21) Pause Full (Allocation Failure) 316M->277M(317M) 57.332ms
+6588
+lw@DESKTOP-1JVUVP4  F:\Code\Java\JAVA-000   main ≣ +1 ~2 -0 !                                         [10:08]
+❯ java -XX:+UseSerialGC -Xms528m -Xmx528m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+[0.011s][info][gc] Using Serial
+[0.778s][info][gc] GC(0) Pause Young (Allocation Failure) 140M->50M(510M) 33.116ms
+[0.847s][info][gc] GC(1) Pause Young (Allocation Failure) 190M->107M(510M) 48.562ms
+[0.910s][info][gc] GC(2) Pause Young (Allocation Failure) 248M->157M(510M) 40.834ms
+[0.971s][info][gc] GC(3) Pause Young (Allocation Failure) 297M->210M(510M) 44.013ms
+[1.037s][info][gc] GC(4) Pause Young (Allocation Failure) 350M->262M(510M) 45.540ms
+[1.101s][info][gc] GC(5) Pause Young (Allocation Failure) 403M->313M(510M) 43.860ms
+[1.171s][info][gc] GC(7) Pause Full (Allocation Failure) 454M->256M(510M) 47.008ms
+[1.171s][info][gc] GC(6) Pause Young (Allocation Failure) 454M->256M(510M) 47.533ms
+[1.199s][info][gc] GC(8) Pause Young (Allocation Failure) 397M->309M(510M) 8.019ms
+[1.252s][info][gc] GC(9) Pause Young (Allocation Failure) 449M->355M(510M) 33.679ms
+[1.323s][info][gc] GC(11) Pause Full (Allocation Failure) 496M->297M(510M) 48.970ms
+[1.324s][info][gc] GC(10) Pause Young (Allocation Failure) 496M->297M(510M) 49.769ms
+[1.354s][info][gc] GC(12) Pause Young (Allocation Failure) 438M->354M(510M) 8.625ms
+[1.428s][info][gc] GC(14) Pause Full (Allocation Failure) 495M->322M(510M) 53.364ms
+[1.429s][info][gc] GC(13) Pause Young (Allocation Failure) 495M->322M(510M) 53.801ms
+[1.506s][info][gc] GC(16) Pause Full (Allocation Failure) 463M->309M(510M) 59.483ms
+[1.507s][info][gc] GC(15) Pause Young (Allocation Failure) 463M->309M(510M) 60.014ms
+[1.575s][info][gc] GC(18) Pause Full (Allocation Failure) 449M->326M(510M) 43.394ms
+[1.575s][info][gc] GC(17) Pause Young (Allocation Failure) 449M->326M(510M) 43.952ms
+[1.656s][info][gc] GC(20) Pause Full (Allocation Failure) 467M->331M(510M) 62.490ms
+[1.657s][info][gc] GC(19) Pause Young (Allocation Failure) 467M->331M(510M) 63.235ms
+10239
+lw@DESKTOP-1JVUVP4  F:\Code\Java\JAVA-000   main ≣ +1 ~2 -0 !                                         [10:08]
+❯ java -XX:+UseSerialGC -Xms728m -Xmx728m -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+[0.008s][info][gc] Using Serial
+[0.709s][info][gc] GC(0) Pause Young (Allocation Failure) 194M->65M(703M) 39.811ms
+[0.791s][info][gc] GC(1) Pause Young (Allocation Failure) 259M->133M(703M) 53.264ms
+[0.863s][info][gc] GC(2) Pause Young (Allocation Failure) 327M->201M(703M) 49.281ms
+[0.933s][info][gc] GC(3) Pause Young (Allocation Failure) 395M->268M(703M) 45.909ms
+[0.998s][info][gc] GC(4) Pause Young (Allocation Failure) 462M->331M(703M) 39.521ms
+[1.067s][info][gc] GC(5) Pause Young (Allocation Failure) 525M->398M(703M) 42.258ms
+[1.143s][info][gc] GC(6) Pause Young (Allocation Failure) 593M->467M(703M) 46.938ms
+[1.216s][info][gc] GC(8) Pause Full (Allocation Failure) 661M->305M(703M) 46.400ms
+[1.217s][info][gc] GC(7) Pause Young (Allocation Failure) 661M->305M(703M) 46.902ms
+[1.254s][info][gc] GC(9) Pause Young (Allocation Failure) 499M->377M(703M) 8.830ms
+[1.297s][info][gc] GC(10) Pause Young (Allocation Failure) 571M->441M(703M) 14.488ms
+[1.380s][info][gc] GC(12) Pause Full (Allocation Failure) 635M->334M(703M) 54.897ms
+[1.380s][info][gc] GC(11) Pause Young (Allocation Failure) 635M->334M(703M) 55.458ms
+[1.420s][info][gc] GC(13) Pause Young (Allocation Failure) 528M->408M(703M) 14.713ms
+[1.468s][info][gc] GC(14) Pause Young (Allocation Failure) 602M->471M(703M) 16.227ms
+[1.551s][info][gc] GC(16) Pause Full (Allocation Failure) 665M->341M(703M) 54.253ms
+[1.552s][info][gc] GC(15) Pause Young (Allocation Failure) 665M->341M(703M) 54.862ms
+13551
+```
+
+&ensp;&ensp;&ensp;&ensp;关于后面下降趋势的验证可以看下面的测试数据，就简单的测试4G的内存，可以看出虽然只有一次的GC，但用了155ms，总时间的15%
+
+```sh
+❯ java -XX:+UseSerialGC -Xms4g -Xmx4g -Xlog:gc F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java
+[0.015s][info][gc] Using Serial
+[1.284s][info][gc] GC(0) Pause Young (Allocation Failure) 1092M->250M(3959M) 153.248ms
+[1.668s][info][gc] GC(1) Pause Young (Allocation Failure) 1342M->411M(3959M) 220.736ms
+10050
+```
+
+## 作业二
+&ensp;&ensp;&ensp;&ensp;使用压测工具（wrk或sb），演练gateway-server-0.0.1-SNAPSHOT.jar 示例。
+
+## 作业三
+&ensp;&ensp;&ensp;&ensp;如果自己本地有可以运行的项目，可以按照2的方式进行演练。
+
+```
+
+
+## 作业二
+&ensp;&ensp;&ensp;&ensp;使用压测工具（wrk或sb），演练gateway-server-0.0.1-SNAPSHOT.jar 示例。
+
+## 作业三
+&ensp;&ensp;&ensp;&ensp;如果自己本地有可以运行的项目，可以按照2的方式进行演练。
+
+```
+
+
+## 作业二
+&ensp;&ensp;&ensp;&ensp;使用压测工具（wrk或sb），演练gateway-server-0.0.1-SNAPSHOT.jar 示例。
+
+## 作业三
+&ensp;&ensp;&ensp;&ensp;如果自己本地有可以运行的项目，可以按照2的方式进行演练。
+
+
+
+
+
+# 10.24周六记录
+***
+主要研究 io 多路复用就好了
