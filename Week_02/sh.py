@@ -27,7 +27,7 @@ def allTest(command):
 
 def addedTest(command):
     """对单个GC进行内存递增测试"""
-    for memory in range(128, 4000, 100):
+    for memory in range(128, 16000, 400):
         xmx = "-Xmx" + str(memory) + "m"
         xms = "-Xms" + str(memory) + "m"
         command[1] = xmx
@@ -44,13 +44,15 @@ def addedTest(command):
 
 
 if __name__ == "__main__":
-    command = ["java", "-Xmx1g", "-Xms1g", "-XX:+UseConcMarkSweepGC", "-Xlog:gc", "F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java"]
+    # command = ["java", "-Xmx1g", "-Xms1g", "-XX:+UseConcMarkSweepGC", "-Xlog:gc", "F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java"]
 
-    result = subprocess.check_output(" ".join(command))
-    for item in str(result).split("\\n"):
-        print(item)
+    # result = subprocess.check_output(" ".join(command))
+    # for item in str(result).split("\\n"):
+    #     print(item)
     # print(str(result))
-    exit(0)
+    # exit(0)
+
+    command = ["java", "-Xmx1g", "-Xms1g", "-XX:+UseConcMarkSweepGC", "F:\Code\Java\JAVA-000\Week_01\example\src\com\company\GCLogAnalysis.java"]
 
     # allTest(command)
 
