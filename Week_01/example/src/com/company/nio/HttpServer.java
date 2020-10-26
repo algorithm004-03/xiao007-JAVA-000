@@ -16,10 +16,10 @@ public class HttpServer {
             try {
                 final Socket socket = serverSocket.accept();
 //                executorService.execute(() -> service(socket));
-                new Thread(() -> {
-                    service(socket);
-                }).start();
-//                service(socket);
+//                new Thread(() -> {
+//                    service(socket);
+//                }).start();
+                service(socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -36,6 +36,7 @@ public class HttpServer {
             printWriter.println("hello.nio");
             printWriter.close();
             socket.close();
+            System.out.println(111);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
