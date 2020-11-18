@@ -15,10 +15,21 @@ import java.util.concurrent.locks.ReentrantLock;
 public class SemaphoreMethod {
 
     private volatile Integer value = null;
-    final Semaphore semaphore = new Semaphore(1);
+    private final Semaphore semaphore = new Semaphore(1);
+
+    /**
+     * 生成初始化的时候先把锁给拿了
+     * 而sum和get方法中，get需要锁，sum不需要锁
+     * sum不需要锁就可以执行，执行完后释放锁
+     * get在没有锁释放的情况下，一定不能执行，也就是只有在sum释放锁后才能执行
+     * @throws InterruptedException
+     */
+    SemaphoreMethod () throws InterruptedException {
+        semaphore.acquire();
+    }
 
     public void sum(int num) throws InterruptedException {
-        semaphore.acquire();
+        Thread.sleep(5000);
         value = fibo(num);
         semaphore.release();
     }
