@@ -55,8 +55,11 @@ CREATE TABLE IF NOT EXISTS `orders` (
 
 insert into users (name, password, phoneNumber, identify_card, money)
 VALUES ("name", "password", "phoneNumber", "1234567890123456", 0);
+
 insert into stores (name, description) VALUES ("name", "description");
+
 insert into goods(name, description, price, weight, store_id, store_name, status)
 VALUES ("name","description", 1, 1, 1,"name",1);
+
 insert into orders (user_id, commodities, status, deliver_status, total_price, create_time, update_time)
 VALUES (1, '{"key": "value"}', 0, '{"key":"value"}', 1, unix_timestamp(now()) , unix_timestamp(now()));

@@ -2,14 +2,20 @@ package com.example.demo.week06;
 
 import lombok.Data;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 
 /**
  * 订单
  * @author lw
  */
+@Entity
 @Data
-public class Order {
+public class OrderEntity {
 
+    @Id @GeneratedValue
     private Long id;
     private Long user_id;
     private String commodities;
@@ -19,12 +25,13 @@ public class Order {
     private Long create_time;
     private Long update_time;
 
-    Order(long userId, String commodities, long totalPrice) {
+    OrderEntity(long userId, String commodities, long totalPrice) {
         this.user_id = userId;
         this.commodities = commodities;
         this.status = 0;
-        this.deliver_status = null;
+        this.deliver_status = "{}";
         this.total_price = totalPrice;
-        this.create_time = System.currentTimeMillis();
+        this.create_time = Long.valueOf(String.valueOf(System.currentTimeMillis() / 1000));
+        this.update_time = create_time;
     }
 }

@@ -19,19 +19,6 @@
 		<java.source-target.version>1.8</java.source-target.version>
 	</properties>
 
-	<repositories>
-		<repository>
-			<id>spring</id>
-			<url>https://maven.aliyun.com/repository/spring</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -57,9 +44,25 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
 			<version>8.0.14</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.shardingsphere</groupId>
+			<artifactId>sharding-jdbc-core</artifactId>
+			<version>3.0.0</version>
 		</dependency>
 
 		<dependency>
@@ -73,46 +76,26 @@
 			<artifactId>lombok</artifactId> <!-- Use 'netty-all' for 4.0 or above -->
 			<version>1.16.16</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-jdbc-core</artifactId>
+			<version>5.0.0-alpha</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.shardingsphere</groupId>
+			<artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
+			<version>5.0.0-alpha</version>
+		</dependency>
 
 	</dependencies>
 
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>aspectj-maven-plugin</artifactId>
-					<version>1.7</version>
-					<configuration>
-						<showWeaveInfo>true</showWeaveInfo>
-						<source>${java.source-target.version}</source>
-						<target>${java.source-target.version}</target>
-						<Xlint>ignore</Xlint>
-						<complianceLevel>${java.source-target.version}</complianceLevel>
-						<encoding>UTF-8</encoding>
-						<verbose>true</verbose>
-					</configuration>
-					<executions>
-						<execution>
-							<!-- IMPORTANT -->
-							<phase>process-sources</phase>
-							<goals>
-								<goal>compile</goal>
-								<goal>test-compile</goal>
-							</goals>
-						</execution>
-					</executions>
-					<dependencies>
-						<dependency>
-							<groupId>org.aspectj</groupId>
-							<artifactId>aspectjtools</artifactId>
-							<version>1.8.9</version>
-						</dependency>
-					</dependencies>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -121,7 +104,14 @@
 
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>aspectj-maven-plugin</artifactId>
+				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.7</version>
+				<configuration>
+					<instrumentation>
+						<ignoreMethodAnnotation>lombok.Generated</ignoreMethodAnnotation>
+					</instrumentation>
+					<check/>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

@@ -11,8 +11,9 @@ import java.util.Map;
 @Repository
 public interface OrderMapper {
 
-    void insert(Order order);
+    void insertOne(OrderEntity orderEntity);
+    void insertMany(List<OrderEntity> orders);
     void delete(Long id);
-    void update(Order order);
-    List<Order> query(Map<String, Object> condition);
+    void update(OrderEntity orderEntity);
+    List<Map<String, Object>> query(Map<String, Object> condition);
 }
