@@ -173,3 +173,7 @@ local.properties
 .worksheet
 
 logs
+.mvn
+
+*.iml
+mvnw*
