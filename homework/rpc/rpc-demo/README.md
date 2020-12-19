@@ -26,13 +26,13 @@ RPC-DEMO
 ### 关于 RPC 的一些思考
 &ensp;&ensp;&ensp;&ensp;秦老师说过一句话，可以道破其本质：RPC 就是为了 OOP。下面以HTTP的相似场景举例：
 
-![](./flow1.png)
+![](https://github.com/lw1243925457/JAVA-000/raw/main/homework/rpc/rpc-demo/flow1.png)
 
 &ensp;&ensp;&ensp;&ensp;上面是一个比较简略的使用postman或者浏览器访问的数据流程，因为HTTP协议本质传输的也是一个问题。在自己接触的写前端请求后端接口，传输的基本是字符串
 
 &ensp;&ensp;&ensp;&ensp;下面是 RPC 的：
 
-![](./flow2.png)
+![](https://github.com/lw1243925457/JAVA-000/raw/main/homework/rpc/rpc-demo/flow2.png)
 
 &ensp;&ensp;&ensp;&ensp;RPC表示不想这么玩，咱后端就要有后端的样子，要像平时使用类，调用方法那样才用的爽。
 

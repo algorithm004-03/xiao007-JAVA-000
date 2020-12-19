@@ -4,6 +4,8 @@
 - 1.运行底层基础服务（provider）：account工程下的 AccountServiceApplication
 - 2.运行业务层测试：transaction工程下的 TransactionServiceApplication
 
+&ensp;&ensp;&ensp;&ensp;*完整的项目工程地址：[RPC-Demo](https://github.com/lw1243925457/JAVA-000/tree/main/homework/himly-tcc-dubbo)*
+
 ### 相关思路和原理
 &ensp;&ensp;&ensp;&ensp;需要了解两个概念：TCC和RPC，可以参考下面两个Demo的思路部分说明：
 
@@ -256,3 +258,8 @@ public class TransactionServiceApplication implements ApplicationRunner {
 &ensp;&ensp;&ensp;&ensp;可见了解相关原理非常重要的，在使用框架的工程中能大致做到心中有数，能猜测需要进行哪些步骤。
 
 &ensp;&ensp;&ensp;&ensp;金额交易部分就省略很多了，重点还是体现TCC和Dubbo的结合使用吧，不得不对RPC真的挺好用
+
+## 错误记录
+### You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'order WHERE 1 != 1' at line 1
+
+himly 官方demo：order 是MySQL保留字，  原来的SQL语句 从  order 改成  `order`   应该就可以了

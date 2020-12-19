@@ -12,7 +12,7 @@
 - [ ] 3）尝试自定义二进制序列化
 - [ ] 4）尝试压测改进后的RPC并分析优化，有问题欢迎群里讨论
 - [ ] 5）尝试将fastjson改成xstream
-- [ ] 6）尝试使用字节码生成方式代替服务端反射
+- [x] 6）尝试使用字节码生成方式代替服务端反射
 
 *作业详情及代码地址：[Rpcfx](https://github.com/lw1243925457/JAVA-000/tree/main/homework/rpc/rpc-demo)*
 

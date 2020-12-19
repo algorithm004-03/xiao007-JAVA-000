@@ -36,7 +36,7 @@ public interface AccountMapper {
      */
     @Update("update `himly_dubbo_account` set us_wallet = us_wallet + #{us_wallet}, cny_wallet = cny_wallet + " +
             "#{cny_wallet} where us_wallet >= #{us_wallet} and cny_wallet >= #{cny_wallet} and id = #{id}")
-    public boolean payment(Account account);
+    boolean payment(Account account);
 
     /**
      * query one
@@ -44,5 +44,5 @@ public interface AccountMapper {
      * @return account
      */
     @Select("select * from himly_dubbo_account where id = #{id}")
-    public Account queryOne(Account account);
+    Account queryOne(Account account);
 }
