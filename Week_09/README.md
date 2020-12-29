@@ -16,6 +16,8 @@
 
 *作业详情及代码地址：[Rpcfx](https://github.com/lw1243925457/JAVA-000/tree/main/homework/rpc/rpc-demo)*
 
+*后序更多的关于RPC框架的选做放到了一个单独的工程,RPC Dome框架项目地址：[Java-Rpc-Demo](https://github.com/lw1243925457/Java-Rpc-Demo)*
+
 ### 二、结合dubbo+hmily，实现一个TCC外汇交易处理，代码提交到github：
 
 - 1）用户A的美元账户和人民币账户都在A库，使用1美元兑换7人民币；

@@ -24,3 +24,7 @@
 
 
 RPC Dome框架项目地址：[Java-Rpc-Demo](https://github.com/lw1243925457/Java-Rpc-Demo)
+
+## 参考链接
+- [一致性 hash 算法 - 虚拟节点](https://liqingqiya.github.io/hash/%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C/%E7%AE%97%E6%B3%95/%E5%88%86%E5%B8%83%E5%BC%8F/2020/05/11/dht-hash.html)
+- [5分钟理解一致性哈希算法](https://juejin.cn/post/6844903750860013576)
