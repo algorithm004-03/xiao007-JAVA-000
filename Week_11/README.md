@@ -14,7 +14,7 @@
 - [x] 基于Redis的PubSub实现订单异步处理
 
 ### 作业代码及详情
-- 代码及详情地址：[redis-lock](https://github.com/lw1243925457/JAVA-000/tree/main/homework/redis/redis-pubsub)
+- 代码及详情地址：[redis-pubsub](https://github.com/lw1243925457/JAVA-000/tree/main/homework/redis/redis-pubsub)
 
 
 ## 其他

@@ -277,7 +277,8 @@ Week08 作业题目（周六）：
   - [ ] 1）实现guava cache的spring cache适配；
   - [ ] 2）替换jackson序列化为fastjson或者fst，kryo；
   - [ ] 3）对项目进行分析和性能调优。
-  - [ ] 3、（挑战☆☆☆）以redis作为基础实现上个模块的自定义rpc的注册中心。
+
+- [ ] 3、（挑战☆☆☆）以redis作为基础实现上个模块的自定义rpc的注册中心。
 
 ### Week12
 - [x] 1.（必做）配置 redis 的主从复制，sentinel 高可用，Cluster 集群
