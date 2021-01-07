@@ -133,12 +133,55 @@ public class HyperLogLog {
 ```
 
 ### 5）以redis作为数据库，模拟使用lua脚本实现前面课程的外汇交易事务
+&ensp;&ensp;&ensp;&ensp;&ensp;这里就不使用Java程序写了，直接使用lua脚本，内容大致如下，这里将 6379 的redis作为A
 
+*时间原因，写个大概，还没有时间跑过，后面仔细看完文档后再补回来*
+
+```shell script
+local redis = require "resty.redis"
+
+-- 连接第一个redis数据库6379
+local red1 = redis:new()
+red1:set_timeout(1000)
+local ok, err = red1:connect("127.0.0.1", 6379)
+if not ok then
+    ngx.say("failed to connect: ", err)
+    return
+end
+
+-- 连接第二个redis数据库6380
+local red2 = redis:new()
+red2:set_timeout(1000)
+local ok, err = red2:connect("127.0.0.1", 6380)
+if not ok then
+    ngx.say("failed to connect: ", err)
+    return
+end
+
+-- 先扣人民币账号 成功后扣美元账户
+-- 先扣人民币账号失败 返回0即可
+-- 扣美元账户失败 需要补偿人民币账号
+if redis1.call("DECR", "CNYAccount") == 1 then
+    if redis2.call("DECR", "USAccount") == 1 then
+      return 1
+    else
+      redis1.call("INCR", "CNYAccount")
+      return 0
+else
+    return 0
+```
 
 ## 参考链接
 - [实时排行榜的几种实现方案](https://cloud.tencent.com/developer/article/1456823)
 - [Redis 有序集合(sorted set)](https://www.runoob.com/redis/redis-sorted-sets.html)
+
 - [基于redis生成全局唯一id](https://zhuanlan.zhihu.com/p/95814245)
 - [orderIdGeneration-RedisUtil](https://github.com/smallFive55/orderIdGeneration/blob/master/src/main/java/com/five/generation/utils/RedisUtil.java)
+
 - [redis--bitmap实现去重](https://blog.csdn.net/eos2009/article/details/80256604)
+
 - [HyperLogLog 算法的原理讲解以及 Redis 是如何应用它的](https://juejin.cn/post/6844903785744056333)
+
+- [Lua: A Guide for Redis Users](https://www.redisgreen.com/blog/intro-to-lua-for-redis-programmers/)
+- [lua脚本连接redis数据库（redis设置密码的）](https://blog.csdn.net/suewar3/article/details/88753688)
+- [http://www.lua.org/](http://www.lua.org/)
