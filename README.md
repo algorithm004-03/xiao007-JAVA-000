@@ -2,30 +2,20 @@
 ***
 *作业提交地址：[https://github.com/JAVA-000/JAVA-000/issues](https://github.com/JAVA-000/JAVA-000/issues)*
 
-## 仓库目录结构说明
+## 毕业总结
+PS:其他的后面复习总结完再补
 
-1. `week01/` 代表第一周作业提交目录，以此类推。
-2. 请在对应周的目录下新建或修改自己的代码作业。
-2. 每周均有一个 `REDAME.md` 文档，你可以将自己当周的学习心得以及做题过程中的思考记录在该文档中。
-
-## 作业提交规则
- 
-1. 先将本仓库 Fork 到自己 GitHub 账号下。
-2. 将 Fork 后的仓库 Clone 到本地，然后在本地仓库中对应周的目录下新建或修改自己的代码作业，当周的学习总结写在对应周的README.md文件里。
-3. 在本地仓库完成作业后，push 到自己的 GitHub 远程仓库。
-4. 最后将远程仓库中当周的作业链接，按格式贴到班级仓库对应学习周的issue下面。
-5. 提交issue请务必按照规定格式进行提交，否则作业统计工具将抓取不到你的作业提交记录。 
-
-详细的作业提交流程可以查阅：https://shimo.im/docs/m5rtM8K8rNsjw5jk/ 
-
-
-## 注意事项
-
- 如果对 Git 和 GitHub 不太了解，请参考 [Git 官方文档](https://git-scm.com/book/zh/v2) 或者极客时间的[《玩转 Git 三剑客》](https://time.geekbang.org/course/intro/145)视频课程。
-
+- [x] 1) JVM：[ava训练营 模块一 JVM 总结 总览](https://github.com/lw1243925457/JAVA-000/blob/main/Week_02/README.md)
+- [ ] 2) NIO: []()
+- [ ] 3) 并发编程: []()
+- [ ] 4) Spring 和 ORM 等框架: []()
+- [ ] 5) MySQL 数据库和 SQL: []()
+- [ ] 6) 分库分表: []()
+- [ ] 7) RPC 和微服务: []()
+- [ ] 8) 分布式缓存: []()
+- [ ] 9) 分布式消息队列: []()
 
 ## 任务列表清单
-
 ### 1. JVM
 常规
 
@@ -320,3 +310,41 @@ Week08 作业题目（周六）：
   - [x] 1）收单：请实现一个订单的rest接口，能够接收一个订单Order对象；
   - [x] 2）定序：将Order对象写入到kafka集群的order.usd2cny队列，要求数据有序并且不丢失；
   - [x] 3）撮合：模拟撮合程序（不需要实现撮合逻辑），从kafka获取order数据，并打印订单信息，要求可重放, 顺序消费, 消息仅处理一次。。
+
+### Week14
+- [x] 1、基于内存Queue实现生产和消费API（已经完成）
+  - [x] 1）创建内存Queue，作为底层消息存储
+  - [x] 2）定义Topic，支持多个Topic
+  - [x] 3）定义Producer，支持Send消息
+  - [x] 4）定义Consumer，支持Poll消息
+
+- [x] 2、去掉内存Queue，设计自定义Queue，实现消息确认和消费offset
+  - [x] 1）自定义内存Message数组模拟Queue。
+  - [x] 2）使用指针记录当前消息写入位置。
+  - [x] 3）对于每个命名消费者，用指针记录消费位置。
+
+- [x] 3、拆分broker和client(包括producer和consumer)
+  - [x] 1）将Queue保存到web server端
+  - [x] 2）设计消息读写API接口，确认接口，提交offset接口
+  - [x] 3）producer和consumer通过httpclient访问Queue
+  - [x] 4）实现消息确认，offset提交
+    - [x] 单机
+    - [ ] 集群
+  - [x] 5）实现consumer从offset增量拉取
+
+- [ ] 1）考虑实现消息过期，消息重试，消息定时投递等策略
+- [ ] 2）考虑批量操作，包括读写，可以打包和压缩
+- [ ] 2）考虑消息清理策略，包括定时清理，按容量清理等
+- [ ] 3）考虑消息持久化，存入数据库，或WAL日志文件，或BookKeeper
+- [ ] 4）考虑将spring mvc替换成netty下的tcp传输协议
+
+- [ ] 5、对接各种技术（各条之间没有关系，可以任意选择实现）
+  - [ ] 1）考虑封装 JMS 1.1 接口规范
+  - [ ] 2）考虑实现 STOMP 消息规范
+  - [ ] 3）考虑实现消息事务机制与事务管理器
+  - [ ] 4）对接Spring
+  - [ ] 5）对接Camel或Spring Integration
+  - [ ] 6）优化内存和磁盘的使用
+
+### Week15
+- [ ] 秒杀系统的设计和实现Demo
