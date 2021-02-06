@@ -3,7 +3,13 @@
 *作业提交地址：[https://github.com/JAVA-000/JAVA-000/issues](https://github.com/JAVA-000/JAVA-000/issues)*
 
 ## 毕业总结
+1、(必做)分别用 100 个字以上的一段话，加上一幅图 (架构图或脑图)，总结自己对下列技术的关键点思考和经验认识:
+
 PS:其他的后面复习总结完再补
+
+- [Java进阶训练营总结文章总览](https://github.com/lw1243925457/SE-Notes/blob/master/profession/program/java/%E8%BF%9B%E9%98%B6%E7%9F%A5%E8%AF%86%E8%B7%AF%E5%BE%84/%E8%BF%9B%E9%98%B6%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93%E6%96%87%E7%AB%A0%E6%80%BB%E8%A7%88.md)
+
+- [软件工程师知识体系脑图.xmind](https://github.com/lw1243925457/SE-Notes/blob/master/profession/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B%E5%B8%88%E7%9F%A5%E8%AF%86%E4%BD%93%E7%B3%BB%E8%84%91%E5%9B%BE.xmind)
 
 - [x] 1) JVM：[ava训练营 模块一 JVM 总结 总览](https://github.com/lw1243925457/JAVA-000/blob/main/Week_02/README.md)
 - [ ] 2) NIO: []()
