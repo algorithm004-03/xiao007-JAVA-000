@@ -1,0 +1,28 @@
+<property name="nullCatalogMeansCurrent" value="true"/>
+        </jdbcConnection>
+<javaTypeResolver>
+<property name="forceBigDecimals" value="false" />
+</javaTypeResolver>
+<javaModelGenerator targetPackage="com.sch.app.mybatis.entity" targetProject="SpringbootMybatis\src\main\java">
+<property name="enableSubPackages" value="true"/>
+<!-- 从数据库返回的值被清理前后的空格  -->
+<property name="trimStrings" value="true" />
+</javaModelGenerator>
+<sqlMapGenerator targetPackage="mapper" targetProject="SpringbootMybatis\src\main\resources">
+<property name="enableSubPackages" value="true"/>
+</sqlMapGenerator>
+<javaClientGenerator type="XMLMAPPER" targetPackage="com.sch.app.mybatis.mapper" targetProject="SpringbootMybatis\src\main\java">
+<property name="enableSubPackages" value="true"/>
+</javaClientGenerator>
+
+        <!--数据库表-->
+<table  schema="" tableName="d_dictionary"></table>
+<table  schema="" tableName="d_dictionary_type"></table>
+<table  schema="" tableName="c_resource"></table>
+<table  schema="" tableName="c_role"></table>
+<table  schema="" tableName="c_role_resource"></table>
+<table  schema="" tableName="c_user_online"></table>
+<table  schema="" tableName="c_user"></table>
+<table  schema="" tableName="c_user_role"></table>
+<table  schema="" tableName="test"></table>
+        </context>
