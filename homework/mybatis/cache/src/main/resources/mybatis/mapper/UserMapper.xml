@@ -5,5 +5,4 @@
     <select id="select" resultType="com.example.cache.entity.User">
         select * from `user`;
     </select>
-
 </mapper>
