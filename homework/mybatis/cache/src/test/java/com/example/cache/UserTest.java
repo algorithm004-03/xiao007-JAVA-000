@@ -39,11 +39,11 @@ public class UserTest {
 
     @Test
     public void testSelectOneCache() {
-        List<User> users = userMapper.selectList(null);
+        List<User> users = userMapper.select();
         Assertions.assertEquals(5, users.size());
         users.forEach(System.out::println);
 
-        users = userMapper.selectList(null);
+        users = userMapper.select();
         Assertions.assertEquals(5, users.size());
         users.forEach(System.out::println);
     }

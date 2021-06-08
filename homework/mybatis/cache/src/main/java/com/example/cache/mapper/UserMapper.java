@@ -17,13 +17,16 @@
 
 package com.example.cache.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.cache.entity.User;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author liuwei
  */
 @Repository
-public interface UserMapper extends BaseMapper<User> {
+public interface UserMapper {
+
+    List<User> select();
 }
