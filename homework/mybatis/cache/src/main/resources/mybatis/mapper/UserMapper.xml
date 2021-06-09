@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.example.cache.mapper.UserMapper"><cache/>
+    <update id="update">
+        UPDATE
+        users
+        SET
+        <trim suffixOverrides="," suffix="WHERE id = #{id}">
+            <if test="name != null">name = #{name},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="email != null">email = #{email},</if>
+        </trim>
+    </update>
     <select id="select" resultType="com.example.cache.entity.User">
         select * from `user`;
     </select>

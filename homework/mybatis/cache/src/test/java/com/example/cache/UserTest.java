@@ -46,5 +46,11 @@ public class UserTest {
         users = userMapper.select();
         Assertions.assertEquals(5, users.size());
         users.forEach(System.out::println);
+
+        users.get(0).setAge(1);
+
+        users = userMapper.select();
+        Assertions.assertEquals(5, users.size());
+        users.forEach(System.out::println);
     }
 }

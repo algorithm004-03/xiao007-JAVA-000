@@ -29,4 +29,6 @@ import java.util.List;
 public interface UserMapper {
 
     List<User> select();
+
+    long update(User user);
 }
