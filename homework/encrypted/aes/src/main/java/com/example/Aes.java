@@ -45,8 +45,7 @@ public class Aes {
             byte[] p = plainText.getBytes("UTF-8");
             byte[] result = cipher.doFinal(p);
             BASE64Encoder encoder = new BASE64Encoder();
-            String encoded = encoder.encode(result);
-            return encoded;
+            return encoder.encode(result);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
