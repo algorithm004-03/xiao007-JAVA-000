@@ -85,6 +85,7 @@ public class ShardingDataSourceMybatisPlusConfig extends MybatisPlusAutoConfigur
         // 配置分片规则
         ShardingRuleConfiguration shardingRuleConfig = new ShardingRuleConfiguration();
 
+        // 遍历表的固定映射：表table1到数据源db0访问，表table2到数据源db1访问
         Map<String, String> rules = multipleDbConfig.getRules();
         for (final String table: rules.keySet()) {
             // 配置添加 t_order 表规则
@@ -92,6 +93,7 @@ public class ShardingDataSourceMybatisPlusConfig extends MybatisPlusAutoConfigur
             shardingRuleConfig.getTables().add(new ShardingTableRuleConfiguration(table, actualDataNodes));
         }
 
+        // 配置 sharding_table 表的访问，需要自定义实现分库和分表算法
         ShardingTableRuleConfiguration ShardingTableRuleConfiguration = new ShardingTableRuleConfiguration("sharding_table", "db${0..1}.sharding_table");
         shardingRuleConfig.setDefaultDatabaseShardingStrategy(new StandardShardingStrategyConfiguration("id", "customDbSharding"));
         shardingRuleConfig.setDefaultTableShardingStrategy(new StandardShardingStrategyConfiguration("id", "customTableSharding"));
