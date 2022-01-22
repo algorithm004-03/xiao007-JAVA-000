@@ -1,0 +1,17 @@
+# shardingSphere ????
+shardingsphere:
+  # ???????
+  datasources:
+    # ???1
+    db0:
+      jdbcurl: ${DB1_URL:jdbc:mysql://127.0.0.1:3306/demo1?useUnicode=true&serverTimezone=UTC}
+      username: ${DB1_USER:root}
+      password: ${DB1_PASS:root}
+    # ???2
+    db1:
+      jdbcurl: ${DB2_URL:jdbc:mysql://127.0.0.1:3306/demo2?useUnicode=true&serverTimezone=UTC}
+      username: ${DB2_USER:root}
+      password: ${DB2_PASS:root}
+  rules:
+    table1: db0
+    table2: db1
